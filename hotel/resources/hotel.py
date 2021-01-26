@@ -1,40 +1,8 @@
 from flask_restful import Resource, reqparse
 from hotel.models.hotel import HotelModel
 from flask_jwt_extended import jwt_required
-import sqlite3
-from sqlalchemy import and_
-
-
-def normalize_path_params(
-    cidade=None,
-    estrelas_min=0,
-    estrelas_max=5,
-    diaria_min=0,
-    diaria_max=10000,
-    limit=50,
-    offset=0,
-    **kwargs,
-):
-    if cidade:
-        return {
-            "estrelas_min": estrelas_min,
-            "estrelas_max": estrelas_max,
-            "diaria_min": diaria_min,
-            "diaria_max": diaria_max,
-            "cidade": cidade,
-            "limit": limit,
-            "offset": offset,
-        }
-
-    return {
-        "estrelas_min": estrelas_min,
-        "estrelas_max": estrelas_max,
-        "diaria_min": diaria_min,
-        "diaria_max": diaria_max,
-        "limit": limit,
-        "offset": offset,
-    }
-
+from hotel.schema.serializer import HotelSchema
+from hotel.filter import normalize_path_params
 
 path_params = reqparse.RequestParser()
 path_params.add_argument("cidade", type=str)
@@ -48,50 +16,15 @@ path_params.add_argument("offset", type=int)
 
 class Hoteis(Resource):
     def get(self):
-
-        connection = sqlite3.connect("banco.db")
-        cursor = connection.cursor()
-
         dados = path_params.parse_args()
         dados_validos = {
             chave: dados[chave] for chave in dados if dados[chave] is not None
         }
         parametros = normalize_path_params(**dados_validos)
 
-        if parametros.get("cidade"):
-            consulta = (
-                HotelModel.query.filter(
-                    HotelModel.cidade == parametros.get("cidade"),
-                    and_(
-                        HotelModel.estrelas > parametros.get("estrelas_min"),
-                        HotelModel.estrelas < parametros.get("estrelas_max"),
-                    ),
-                    and_(
-                        HotelModel.diaria > parametros.get("diaria_min"),
-                        HotelModel.diaria < parametros.get("diaria_max"),
-                    ),
-                )
-                .limit(parametros.get("limit"))
-                .offset(parametros.get("offset"))
-            )
-        else:
-            consulta = (
-                HotelModel.query.filter(
-                    and_(
-                        HotelModel.estrelas > parametros.get("estrelas_min"),
-                        HotelModel.estrelas < parametros.get("estrelas_max"),
-                    ),
-                    and_(
-                        HotelModel.diaria > parametros.get("diaria_min"),
-                        HotelModel.diaria < parametros.get("diaria_max"),
-                    ),
-                )
-                .limit(parametros.get("limit"))
-                .offset(parametros.get("offset"))
-            )
+        hotel_schema = HotelSchema(many=True)
 
-        resposta = [resp.json() for resp in consulta]
-        return {"hotel": resposta}
+        return {"hotel": hotel_schema.dump(parametros)}
 
 
 class Hotel(Resource):
