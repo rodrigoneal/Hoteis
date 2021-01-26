@@ -4,7 +4,6 @@ from hotel.ext.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-
 class UserModel(db.Model):
     __tablename__ = "usuarios"
     user_id = db.Column(db.Integer, primary_key=True)
