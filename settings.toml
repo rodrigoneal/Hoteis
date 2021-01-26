@@ -6,7 +6,8 @@ SECRET_KEY = "jadkfbsdkjbfbh"
 EXTENSIONS = [
 "hotel.ext.database",
 "hotel.ext.api",
-"hotel.ext.jwt"
+"hotel.ext.jwt",
+"hotel.ext.serializer"
 ]
 
 [development]

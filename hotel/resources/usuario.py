@@ -1,9 +1,11 @@
 from datetime import timedelta
+from flask import jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from flask_restful import Resource, reqparse
 from hotel.blacklist import BLACKLIST
 
 from hotel.models.usuario import UserModel
+from hotel.schema.serializer import UserSchema
 
 atributos = reqparse.RequestParser()
 atributos.add_argument(
@@ -18,9 +20,11 @@ class User(Resource):
     # /usuario/{user_id}
 
     def get(self, user_id):
+        user_schema = UserSchema()
         user = UserModel.find_user(user_id)
+
         if user:
-            return user.json()
+            return user_schema.dump(user)
 
         return {"message": "User not found."}, 404
 
