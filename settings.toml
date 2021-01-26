@@ -1,0 +1,20 @@
+[default]
+DEBUG = true
+SQLALCHEMY_DATABASE_URI = "sqlite:///banco.db"
+SQLALCHEMY_TRACK_MODIFICATIONS = false
+SECRET_KEY = "jadkfbsdkjbfbh"
+EXTENSIONS = [
+"hotel.ext.database",
+"hotel.ext.api",
+"hotel.ext.jwt"
+]
+
+[development]
+SQLALCHEMY_DATABASE_URI = "sqlite:///banco.db"
+
+
+[testing]
+SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+
+[production]
+SQLALCHEMY_DATABASE_URI = 'sqlite:///production.db'
