@@ -45,8 +45,8 @@ class UserRegister(Resource):
 
         if UserModel.find_by_login(dados["login"]):
             return {"message": f"The login '{dados['login']}' already exists"}, 400
-        user = UserModel(dados['login'])
-        user.password = dados['senha']
+        user = UserModel(dados["login"])
+        user.password = dados["senha"]
         try:
             user.save_user()
             return {"message": "User created successfully"}, 201
@@ -60,7 +60,9 @@ class UserLogin(Resource):
         dados = atributos.parse_args()
         user = UserModel.correct_user_and_password(**dados)
         if user:
-            token_de_acesso = create_access_token(identity=user.user_id, expires_delta=timedelta(minutes=2))
+            token_de_acesso = create_access_token(
+                identity=user.user_id, expires_delta=timedelta(minutes=2)
+            )
             return {"access_token": token_de_acesso}, 200
 
         return {"message": "The Username or password is incorrect"}
@@ -69,6 +71,6 @@ class UserLogin(Resource):
 class UserLogout(Resource):
     @jwt_required
     def post(self):
-        jwt_id = get_raw_jwt()['jti']
+        jwt_id = get_raw_jwt()["jti"]
         BLACKLIST.add(jwt_id)
-        return {'message': 'Logged out successfully! '}, 200
+        return {"message": "Logged out successfully! "}, 200
