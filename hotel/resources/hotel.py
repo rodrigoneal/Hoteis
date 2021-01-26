@@ -42,9 +42,10 @@ class Hotel(Resource):
     argumento.add_argument("cidade")
 
     def get(self, hotel_id):
+        hotel_schema = HotelSchema()
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            return hotel.json()
+            return hotel_schema.dump(hotel)
         return {"message": "Hotel not found."}, 404
 
     @jwt_required
@@ -71,9 +72,10 @@ class Hotel(Resource):
             try:
                 hotel_encontrado.save_hotel()
             except:
-                return {
-                    "message": "An internal error ocurred trying to save hotel"
-                }, 500
+                return (
+                    {"message": "An internal error ocurred trying to save hotel"},
+                    500,
+                )
             return hotel_encontrado.json(), 200
         hotel = HotelModel(hotel_id, **dados)
         hotel.save_hotel()
@@ -86,8 +88,9 @@ class Hotel(Resource):
             try:
                 hotel.delete_hotel()
             except:
-                return {
-                    "message": "An internal error ocurred trying to delete hotel"
-                }, 500
+                return (
+                    {"message": "An internal error ocurred trying to delete hotel"},
+                    500,
+                )
             return {"message": "hotel deleted."}
         return {"message": "hotel not found"}, 404
