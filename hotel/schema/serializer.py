@@ -13,11 +13,11 @@ class UserSchema(ma.SQLAlchemySchema):
 
 
 class HotelSchema(ma.SQLAlchemyAutoSchema):
-    hotel_id = field_for(HotelModel, 'hotel_id', dump_only=True)
-    nome = field_for(HotelModel, 'nome', dump_only=True)
-    estrelas = field_for(HotelModel, 'estrelas', dump_only=True)
-    diaria = field_for(HotelModel, 'diaria', dump_only=True)
-    cidade = field_for(HotelModel, 'cidade', dump_only=True)
+    hotel_id = field_for(HotelModel, "hotel_id", dump_only=True)
+    nome = field_for(HotelModel, "nome", dump_only=True)
+    estrelas = field_for(HotelModel, "estrelas", dump_only=True)
+    diaria = field_for(HotelModel, "diaria", dump_only=True)
+    cidade = field_for(HotelModel, "cidade", dump_only=True)
 
     class Meta:
         meta = HotelModel
