@@ -17,13 +17,13 @@ path_params.add_argument("offset", type=int)
 class Hoteis(Resource):
     def get(self):
         dados = path_params.parse_args()
+
         dados_validos = {
             chave: dados[chave] for chave in dados if dados[chave] is not None
         }
+
         parametros = normalize_path_params(**dados_validos)
-
         hotel_schema = HotelSchema(many=True)
-
         return {"hotel": hotel_schema.dump(parametros)}
 
 
@@ -45,6 +45,7 @@ class Hotel(Resource):
         hotel_schema = HotelSchema()
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
+
             return hotel_schema.dump(hotel)
         return {"message": "Hotel not found."}, 404
 

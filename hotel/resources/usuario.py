@@ -1,6 +1,10 @@
 from datetime import timedelta
-from flask import jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    get_raw_jwt,
+    get_jwt_identity,
+)
 from flask_restful import Resource, reqparse
 from hotel.blacklist import BLACKLIST
 
@@ -30,8 +34,11 @@ class User(Resource):
 
     @jwt_required
     def delete(self, user_id):
+        current_user = get_jwt_identity()
         user = UserModel.find_user(user_id)
         if user:
+            if current_user != user.user_id:
+                return {"message": "unauthorized"}, 401
             user.delete_user()
 
             return {"message": "User deleted."}
